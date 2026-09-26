@@ -72,8 +72,8 @@ export default function App() {
         <Topbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {/* Viewport Content Area */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
-          <div className="max-w-7xl mx-auto">
+        <main className="flex-1 overflow-y-auto px-3 py-4 pb-20 sm:p-5 sm:pb-20 lg:px-6 lg:py-6 lg:pb-6 xl:px-8">
+          <div className="max-w-[1440px] mx-auto">
             {activeTab === 'dashboard' && (
               <DashboardView stats={stats} setActiveTab={setActiveTab} />
             )}

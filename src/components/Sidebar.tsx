@@ -35,9 +35,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 border-r border-slate-800 select-none">
+    <aside className="fixed bottom-0 left-0 right-0 z-30 h-16 bg-slate-900 text-slate-300 flex flex-row border-t border-slate-800 select-none md:static md:h-auto md:w-64 md:flex-col md:border-t-0 md:border-r">
       {/* Brand Header */}
-      <div className="p-5 border-b border-slate-800/80 flex items-center gap-3">
+      <div className="hidden p-5 border-b border-slate-800/80 items-center gap-3 md:flex">
         <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/30">
           <CalendarCheck className="w-6 h-6" />
         </div>
@@ -52,26 +52,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Nav Menu */}
-      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+      <nav className="flex flex-1 items-stretch gap-1 overflow-x-auto p-1.5 md:block md:space-y-1 md:overflow-y-auto md:overflow-x-hidden md:p-3">
         {menuItems.map((item) => {
           const isActive = activeTab === item.id;
           return (
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all ${
+              title={item.label}
+              className={`min-w-[52px] flex flex-1 flex-col items-center justify-center gap-1 rounded-lg px-1 py-1.5 text-[10px] font-medium transition-all sm:min-w-[76px] md:w-full md:min-w-0 md:flex-row md:justify-between md:px-3.5 md:py-2.5 md:text-sm ${
                 isActive
                   ? 'bg-blue-600 text-white font-semibold shadow-md shadow-blue-600/25'
                   : 'hover:bg-slate-800/70 hover:text-white text-slate-400'
               }`}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col items-center gap-0.5 md:flex-row md:gap-3">
                 {item.icon}
-                <span>{item.label}</span>
+                <span className="hidden max-w-[76px] truncate sm:inline md:max-w-none">{item.label}</span>
               </div>
               {item.badge && (
                 <span
-                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                  className={`hidden text-[10px] font-bold px-1.5 py-0.5 rounded md:inline-block ${
                     isActive
                       ? 'bg-white/20 text-white'
                       : item.badge === 'LIVE'
@@ -88,7 +89,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </nav>
 
       {/* Admin Profile & Logout */}
-      <div className="p-3 border-t border-slate-800/80 bg-slate-950/40">
+      <div className="hidden p-3 border-t border-slate-800/80 bg-slate-950/40 md:block">
         <div className="flex items-center justify-between p-2 rounded-lg bg-slate-800/50">
           <div className="flex items-center gap-2.5 min-w-0">
             <div className="w-8 h-8 rounded-full bg-blue-700 text-white font-bold flex items-center justify-center text-xs shrink-0">
