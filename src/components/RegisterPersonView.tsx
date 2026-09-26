@@ -51,6 +51,15 @@ export const RegisterPersonView: React.FC<RegisterPersonViewProps> = ({
   // Start webcam
   const startCamera = async () => {
     setCameraError(null);
+    if (!window.isSecureContext) {
+      setCameraError('Camera access requires a secure connection. Open this app using HTTPS on your phone, then allow camera access.');
+      return;
+    }
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraError('This browser does not support camera access. Open the app in a current version of Safari or Chrome.');
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
@@ -63,7 +72,16 @@ export const RegisterPersonView: React.FC<RegisterPersonViewProps> = ({
         setCameraActive(true);
       }
     } catch (err: unknown) {
-      const errorMsg = err instanceof Error ? err.message : 'Webcam permission denied';
+      const name = err instanceof DOMException ? err.name : '';
+      const errorMsg = name === 'NotAllowedError'
+        ? 'Camera permission was denied. Allow camera access in your browser and try again.'
+        : name === 'NotFoundError'
+        ? 'No camera was found on this device.'
+        : name === 'NotReadableError'
+        ? 'The camera is already in use by another app.'
+        : err instanceof Error
+        ? err.message
+        : 'Unable to access the camera.';
       setCameraError(
         `Unable to access webcam (${errorMsg}). Please allow camera access in your browser or upload a face photo below.`
       );

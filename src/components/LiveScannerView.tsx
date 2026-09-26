@@ -72,6 +72,15 @@ export const LiveScannerView: React.FC<LiveScannerViewProps> = ({ onAttendanceUp
   // Start Webcam
   const startCamera = async () => {
     setCameraError(null);
+    if (!window.isSecureContext) {
+      setCameraError('Camera access requires a secure connection. Open this app using HTTPS on your phone, then allow camera access.');
+      return;
+    }
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setCameraError('This browser does not support camera access. Open the app in a current version of Safari or Chrome.');
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' },
@@ -86,8 +95,17 @@ export const LiveScannerView: React.FC<LiveScannerViewProps> = ({ onAttendanceUp
         setStatusText('Searching for registered faces in camera frame...');
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : 'Permission denied';
-      setCameraError(`Camera error: ${msg}. You can test the recognition pipeline using the simulator buttons below.`);
+      const name = err instanceof DOMException ? err.name : '';
+      const msg = name === 'NotAllowedError'
+        ? 'Camera permission was denied. Allow camera access in your browser and try again.'
+        : name === 'NotFoundError'
+        ? 'No camera was found on this device.'
+        : name === 'NotReadableError'
+        ? 'The camera is already in use by another app.'
+        : err instanceof Error
+        ? err.message
+        : 'Unable to access the camera.';
+      setCameraError(`${msg} You can test the recognition pipeline using the simulator buttons below.`);
       setIsScanning(false);
     }
   };
@@ -350,6 +368,11 @@ export const LiveScannerView: React.FC<LiveScannerViewProps> = ({ onAttendanceUp
                 <p className="text-xs text-slate-400 mt-1 max-w-sm">
                   Click 'Start Scanner' to begin real-time face matching via your webcam, or use test profiles below.
                 </p>
+                {cameraError && (
+                  <p role="alert" className="text-xs text-red-300 mt-3 max-w-sm">
+                    {cameraError}
+                  </p>
+                )}
                 <button
                   onClick={startCamera}
                   className="mt-4 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-600/30 cursor-pointer"
