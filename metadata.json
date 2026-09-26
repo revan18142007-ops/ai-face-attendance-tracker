@@ -1,0 +1,10 @@
+{
+  "name": "Attendance Tracker",
+  "description": "Smart biometric attendance system using real-time webcam face recognition, admin analytics, registration, and attendance reports.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
